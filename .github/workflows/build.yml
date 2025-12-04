@@ -1,0 +1,42 @@
+name: Build MADGood Micro BTC Miner (Linux)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install build dependencies
+        run: |
+          pip install pyinstaller requests pillow
+
+      - name: Build Linux binary with PyInstaller
+        run: |
+          pyinstaller \
+            --name MADGoodMicroMiner \
+            --onefile \
+            --noconsole \
+            --add-data "assets/BTC Miner App.gif:assets" \
+            --add-data "assets/Madgoodmicrominer_logo.jpg:assets" \
+            --add-data "README.txt:." \
+            --add-binary "miner/linux/cpuminer:miner/linux" \
+            madgood_minerx.py
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MADGoodMicroMiner-linux
+          path: dist/MADGoodMicroMiner
