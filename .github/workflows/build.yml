@@ -14,6 +14,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      # Needed for tkinter on ubuntu-latest
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -22,6 +28,11 @@ jobs:
       - name: Install build dependencies
         run: |
           pip install pyinstaller requests pillow
+
+      # Make sure the miner binary is executable (good practice for when you run it)
+      - name: Make cpuminer executable
+        run: |
+          chmod +x miner/linux/cpuminer
 
       - name: Build Linux binary with PyInstaller
         run: |
